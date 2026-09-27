@@ -1,121 +1,731 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BusinessIndia App Store</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      color: #222;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    header {
-      background: #111;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
+<title>BusinessIndia App Store</title>
 
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-    }
+<style>
+*{box-sizing:border-box}
 
-    .search {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-sizing: border-box;
-      margin-bottom: 20px;
-      font-size: 16px;
-    }
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f6f8;
+color:#222;
+}
 
-    .app {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
+header{
+background:#111;
+color:white;
+padding:25px 15px;
+text-align:center;
+}
 
-    .app h2 {
-      margin-top: 0;
-    }
+header h1{
+margin:0;
+font-size:28px;
+}
 
-    .download {
-      display: inline-block;
-      background: #111;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      text-decoration: none;
-      margin-top: 10px;
-    }
+header p{
+margin:8px 0 0;
+}
 
-    footer {
-      text-align: center;
-      padding: 25px;
-      color: #777;
-    }
-  </style>
+.container{
+max-width:1000px;
+margin:auto;
+padding:20px;
+}
+
+.search{
+width:100%;
+padding:15px;
+border:1px solid #ddd;
+border-radius:10px;
+font-size:16px;
+margin-bottom:20px;
+}
+
+.app{
+background:white;
+padding:18px;
+margin-bottom:15px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.app-top{
+display:flex;
+gap:15px;
+align-items:center;
+}
+
+.icon{
+width:70px;
+height:70px;
+border-radius:15px;
+object-fit:cover;
+background:#eee;
+}
+
+.app h2{
+margin:0 0 7px;
+}
+
+.download{
+display:inline-block;
+background:#111;
+color:white;
+padding:12px 18px;
+border-radius:8px;
+text-decoration:none;
+margin-top:12px;
+}
+
+.login-box,
+.admin-box{
+background:white;
+padding:20px;
+border-radius:12px;
+margin-bottom:25px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+input,
+textarea{
+width:100%;
+padding:13px;
+margin:7px 0 12px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:15px;
+}
+
+button{
+background:#111;
+color:white;
+border:0;
+padding:12px 18px;
+border-radius:8px;
+cursor:pointer;
+font-size:15px;
+}
+
+.logout{
+background:#d33;
+margin-bottom:15px;
+}
+
+.hidden{
+display:none;
+}
+
+.message{
+padding:10px;
+margin:10px 0;
+border-radius:8px;
+background:#eee;
+}
+
+.screenshots{
+display:flex;
+gap:8px;
+overflow-x:auto;
+margin-top:12px;
+}
+
+.screenshots img{
+width:150px;
+height:250px;
+object-fit:cover;
+border-radius:8px;
+}
+
+footer{
+text-align:center;
+padding:30px;
+color:#777;
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>BusinessIndia App Store</h1>
-  <p>अपने पसंदीदा Apps डाउनलोड करें</p>
+<h1>BusinessIndia App Store</h1>
+<p>अपने पसंदीदा Apps मुफ्त में डाउनलोड करें</p>
 </header>
 
 <div class="container">
 
-  <input
-    class="search"
-    type="text"
-    placeholder="App खोजें..."
-    onkeyup="searchApps(this.value)"
-  >
+<input
+id="searchBox"
+class="search"
+type="text"
+placeholder="App खोजें..."
+oninput="searchApps()"
+>
 
-  <div id="apps">
+<div class="login-box" id="loginBox">
 
-    <div class="app">
-      <h2>BusinessIndia App</h2>
-      <p>Business और technology से जुड़ी जानकारी के लिए हमारा ऐप।</p>
-      <p><strong>Version:</strong> 1.0</p>
-      <p><strong>Rating:</strong> ⭐⭐⭐⭐⭐</p>
-      <a class="download" href="#">Download APK</a>
-    </div>
+<h2>Admin Login</h2>
 
-  </div>
+<input
+id="email"
+type="email"
+placeholder="Admin Email"
+>
+
+<input
+id="password"
+type="password"
+placeholder="Password"
+>
+
+<button onclick="adminLogin()">Login</button>
+
+<div id="loginMessage" class="message"></div>
+
+</div>
+
+<div class="admin-box hidden" id="adminPanel">
+
+<h2>Admin Panel</h2>
+
+<button class="logout" onclick="adminLogout()">Logout</button>
+
+<h3>नया App Add करें</h3>
+
+<input
+id="appName"
+type="text"
+placeholder="App Name"
+>
+
+<textarea
+id="description"
+rows="5"
+placeholder="App Description"
+></textarea>
+
+<input
+id="version"
+type="text"
+placeholder="Version जैसे 1.0"
+>
+
+<input
+id="category"
+type="text"
+placeholder="Category जैसे Business, Education, Games"
+>
+
+<input
+id="rating"
+type="number"
+min="0"
+max="5"
+step="0.1"
+placeholder="Rating जैसे 4.5"
+>
+
+<label>App Icon</label>
+
+<input
+id="iconFile"
+type="file"
+accept="image/*"
+>
+
+<label>Screenshots</label>
+
+<input
+id="screenshotFiles"
+type="file"
+accept="image/*"
+multiple
+>
+
+<label>APK File</label>
+
+<input
+id="apkFile"
+type="file"
+accept=".apk"
+>
+
+<input
+id="appSize"
+type="text"
+placeholder="App Size जैसे 25 MB"
+>
+
+<button onclick="addApp()">App Add करें</button>
+
+<div id="adminMessage" class="message"></div>
+
+</div>
+
+<div id="apps">
+<p>Apps loading...</p>
+</div>
 
 </div>
 
 <footer>
-  © 2026 BusinessIndia App Store
+© 2026 BusinessIndia App Store
 </footer>
 
 <script>
-function searchApps(text) {
-  const apps = document.querySelectorAll(".app");
-  text = text.toLowerCase();
 
-  apps.forEach(function(app) {
-    app.style.display =
-      app.innerText.toLowerCase().includes(text)
-      ? "block"
-      : "none";
-  });
+const SUPABASE_URL =
+"https://hebournnxwbarsffuypi.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_OKPxPnwWH5Z4MXFwPzfiyw_doNZ0X6M";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+async function adminLogin(){
+
+const email =
+document.getElementById("email").value.trim();
+
+const password =
+document.getElementById("password").value;
+
+const message =
+document.getElementById("loginMessage");
+
+if(!email || !password){
+
+message.innerText =
+"Email और password भरें।";
+
+return;
 }
+
+message.innerText="Login हो रहा है...";
+
+const {data,error} =
+await supabaseClient.auth.signInWithPassword({
+email:email,
+password:password
+});
+
+if(error){
+
+message.innerText =
+"Login failed: "+error.message;
+
+return;
+}
+
+message.innerText="Login सफल हुआ।";
+
+showAdminPanel();
+}
+
+
+function showAdminPanel(){
+
+document
+.getElementById("loginBox")
+.classList.add("hidden");
+
+document
+.getElementById("adminPanel")
+.classList.remove("hidden");
+}
+
+
+async function adminLogout(){
+
+await supabaseClient.auth.signOut();
+
+document
+.getElementById("adminPanel")
+.classList.add("hidden");
+
+document
+.getElementById("loginBox")
+.classList.remove("hidden");
+}
+
+
+async function checkLogin(){
+
+const {data} =
+await supabaseClient.auth.getSession();
+
+if(data.session){
+
+showAdminPanel();
+
+}
+}
+
+
+async function uploadFile(file,folder){
+
+if(!file)return null;
+
+const fileName =
+Date.now()+"_"+
+Math.random().toString(36).substring(2)+
+"_"+file.name.replace(/\s+/g,"_");
+
+const filePath =
+folder+"/"+fileName;
+
+const {error} =
+await supabaseClient
+.storage
+.from("Apps")
+.upload(filePath,file);
+
+if(error)throw error;
+
+const {data} =
+supabaseClient
+.storage
+.from("Apps")
+.getPublicUrl(filePath);
+
+return data.publicUrl;
+}
+
+
+async function addApp(){
+
+const message =
+document.getElementById("adminMessage");
+
+try{
+
+const {data:sessionData} =
+await supabaseClient.auth.getSession();
+
+if(!sessionData.session){
+
+message.innerText =
+"पहले Admin Login करें।";
+
+return;
+}
+
+const appName =
+document.getElementById("appName").value.trim();
+
+const description =
+document.getElementById("description").value.trim();
+
+const version =
+document.getElementById("version").value.trim();
+
+const category =
+document.getElementById("category").value.trim();
+
+const rating =
+document.getElementById("rating").value || 0;
+
+const appSize =
+document.getElementById("appSize").value.trim();
+
+const iconFile =
+document.getElementById("iconFile").files[0];
+
+const apkFile =
+document.getElementById("apkFile").files[0];
+
+const screenshotFiles =
+document.getElementById("screenshotFiles").files;
+
+if(!appName){
+
+message.innerText="App Name डालें।";
+
+return;
+}
+
+if(!apkFile){
+
+message.innerText="APK File चुनें।";
+
+return;
+}
+
+message.innerText="Files upload हो रही हैं...";
+
+let iconUrl=null;
+
+if(iconFile){
+
+iconUrl =
+await uploadFile(
+iconFile,
+"icons"
+);
+}
+
+const apkUrl =
+await uploadFile(
+apkFile,
+"apks"
+);
+
+let screenshotUrls=[];
+
+for(let i=0;i<screenshotFiles.length;i++){
+
+const url =
+await uploadFile(
+screenshotFiles[i],
+"screenshots"
+);
+
+screenshotUrls.push(url);
+}
+
+const {error} =
+await supabaseClient
+.from("apps")
+.insert({
+
+id:crypto.randomUUID(),
+
+app_name:appName,
+
+description:description,
+
+version:version,
+
+category:category,
+
+app_icon:iconUrl,
+
+screenshots:
+JSON.stringify(screenshotUrls),
+
+rating:Number(rating),
+
+apk_url:apkUrl,
+
+app_size:appSize,
+
+downloads:0
+
+});
+
+if(error)throw error;
+
+message.innerText =
+"✅ App successfully add हो गया!";
+
+document.getElementById("appName").value="";
+document.getElementById("description").value="";
+document.getElementById("version").value="";
+document.getElementById("category").value="";
+document.getElementById("rating").value="";
+document.getElementById("appSize").value="";
+document.getElementById("iconFile").value="";
+document.getElementById("screenshotFiles").value="";
+document.getElementById("apkFile").value="";
+
+loadApps();
+
+}
+
+catch(error){
+
+console.error(error);
+
+message.innerText =
+"❌ Error: "+error.message;
+}
+}
+
+
+async function loadApps(){
+
+const appsBox =
+document.getElementById("apps");
+
+appsBox.innerHTML="<p>Apps loading...</p>";
+
+const {data,error} =
+await supabaseClient
+.from("apps")
+.select("*")
+.order("app_name",{ascending:true});
+
+if(error){
+
+appsBox.innerHTML =
+"<p>Apps load नहीं हो सके।</p>";
+
+console.error(error);
+
+return;
+}
+
+if(!data || data.length===0){
+
+appsBox.innerHTML =
+"<div class='app'><h2>अभी कोई App उपलब्ध नहीं है</h2><p>जल्द ही नए Apps यहाँ आएंगे।</p></div>";
+
+return;
+}
+
+appsBox.innerHTML="";
+
+data.forEach(function(app){
+
+const card =
+document.createElement("div");
+
+card.className="app";
+
+let screenshotsHTML="";
+
+if(app.screenshots){
+
+try{
+
+const screenshots =
+JSON.parse(app.screenshots);
+
+if(Array.isArray(screenshots)){
+
+screenshots.forEach(function(url){
+
+screenshotsHTML +=
+`<img src="${url}" alt="Screenshot">`;
+
+});
+
+}
+
+}catch(e){}
+}
+
+const iconHTML =
+app.app_icon
+?
+`<img class="icon" src="${app.app_icon}" alt="${escapeHTML(app.app_name)}">`
+:
+`<div class="icon"></div>`;
+
+card.innerHTML=`
+
+<div class="app-top">
+
+${iconHTML}
+
+<div>
+
+<h2>${escapeHTML(app.app_name)}</h2>
+
+<div>
+${escapeHTML(app.category || "")}
+</div>
+
+</div>
+
+</div>
+
+<p>
+${escapeHTML(app.description || "")}
+</p>
+
+<p>
+<strong>Version:</strong>
+${escapeHTML(app.version || "-")}
+</p>
+
+<p>
+<strong>Size:</strong>
+${escapeHTML(app.app_size || "-")}
+</p>
+
+<p>
+<strong>Rating:</strong>
+⭐ ${app.rating || "No rating"}
+</p>
+
+${
+screenshotsHTML
+?
+`<div class="screenshots">${screenshotsHTML}</div>`
+:
+""
+}
+
+${
+app.apk_url
+?
+`<a class="download" href="${app.apk_url}" download>Download APK</a>`
+:
+""
+}
+
+`;
+
+appsBox.appendChild(card);
+
+});
+}
+
+
+function searchApps(){
+
+const text =
+document
+.getElementById("searchBox")
+.value
+.toLowerCase();
+
+const apps =
+document.querySelectorAll(".app");
+
+apps.forEach(function(app){
+
+app.style.display =
+app.innerText
+.toLowerCase()
+.includes(text)
+?
+"block"
+:
+"none";
+
+});
+}
+
+
+function escapeHTML(text){
+
+const div =
+document.createElement("div");
+
+div.textContent=text || "";
+
+return div.innerHTML;
+}
+
+
+checkLogin();
+
+loadApps();
+
 </script>
 
 </body>
