@@ -96,8 +96,7 @@ App loading...
 
 <script>
 
-const app =
-JSON.parse(localStorage.getItem("selectedApp"));
+const app = JSON.parse(localStorage.getItem("selectedApp") || "null");
 
 const box =
 document.getElementById("appDetails");
@@ -129,7 +128,9 @@ screenshotsHTML +=
 
 }
 
-}catch(e){}
+}catch(e){
+console.log("Screenshot error:", e);
+}
 
 }
 
