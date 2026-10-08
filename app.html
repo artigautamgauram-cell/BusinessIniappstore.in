@@ -1,1 +1,198 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>App Details - BusinessIndia App Store</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f5f5f5;
+margin:0;
+padding:20px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+}
+
+.back{
+display:inline-block;
+margin-bottom:20px;
+text-decoration:none;
+color:#333;
+font-weight:bold;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:16px;
+box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.icon{
+width:120px;
+height:120px;
+object-fit:cover;
+border-radius:25px;
+display:block;
+margin:0 auto 20px;
+}
+
+h1{
+text-align:center;
+}
+
+.info{
+margin-top:20px;
+line-height:1.7;
+}
+
+.screenshots{
+display:flex;
+gap:10px;
+overflow-x:auto;
+margin-top:20px;
+}
+
+.screenshots img{
+width:180px;
+border-radius:10px;
+}
+
+.download{
+display:block;
+text-align:center;
+background:#000;
+color:white;
+padding:15px;
+border-radius:10px;
+text-decoration:none;
+font-weight:bold;
+margin-top:25px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<a class="back" href="index.html">← वापस Apps पर जाएँ</a>
+
+<div class="card" id="appDetails">
+App loading...
+</div>
+
+</div>
+
+<script>
+
+const app =
+JSON.parse(localStorage.getItem("selectedApp"));
+
+const box =
+document.getElementById("appDetails");
+
+if(!app){
+
+box.innerHTML =
+"<h2>App नहीं मिला</h2>";
+
+}else{
+
+let screenshotsHTML="";
+
+if(app.screenshots){
+
+try{
+
+const screenshots =
+JSON.parse(app.screenshots);
+
+if(Array.isArray(screenshots)){
+
+screenshots.forEach(function(url){
+
+screenshotsHTML +=
+`<img src="${url}" alt="Screenshot">`;
+
+});
+
+}
+
+}catch(e){}
+
+}
+
+const iconHTML =
+app.app_icon
+?
+`<img class="icon" src="${app.app_icon}" alt="App Icon">`
+:
+"";
+
+box.innerHTML=`
+
+${iconHTML}
+
+<h1>${app.app_name || "App"}</h1>
+
+<div class="info">
+
+<p>
+<strong>Description:</strong><br>
+${app.description || "Description उपलब्ध नहीं है।"}
+</p>
+
+<p>
+<strong>Version:</strong>
+${app.version || "-"}
+</p>
+
+<p>
+<strong>Size:</strong>
+${app.app_size || "-"}
+</p>
+
+<p>
+<strong>Rating:</strong>
+⭐ ${app.rating || "No rating"}
+</p>
+
+</div>
+
+${
+screenshotsHTML
+?
+`<div class="screenshots">${screenshotsHTML}</div>`
+:
+""
+}
+
+${
+app.apk_url
+?
+`<a class="download" href="${app.apk_url}" target="_blank">
+Download App
+</a>`
+:
+""
+}
+
+`;
+
+}
+
+</script>
+
+</body>
+</html>
