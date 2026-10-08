@@ -636,53 +636,22 @@ card.innerHTML=`
 ${iconHTML}
 
 <div>
-
 <h2>${escapeHTML(app.app_name)}</h2>
-
-<div>
-${escapeHTML(app.category || "")}
 </div>
 
 </div>
-
-</div>
-
-<p>
-${escapeHTML(app.description || "")}
-</p>
-
-<p>
-<strong>Version:</strong>
-${escapeHTML(app.version || "-")}
-</p>
-
-<p>
-<strong>Size:</strong>
-${escapeHTML(app.app_size || "-")}
-</p>
-
-<p>
-<strong>Rating:</strong>
-⭐ ${app.rating || "No rating"}
-</p>
-
-${
-screenshotsHTML
-?
-`<div class="screenshots">${screenshotsHTML}</div>`
-:
-""
-}
-
-${
-app.apk_url
-?
-`<a class="download" href="${app.apk_url}" download>Download APK</a>`
-:
-""
-}
 
 `;
+
+card.style.cursor="pointer";
+
+card.onclick=function(){
+
+localStorage.setItem("selectedApp", JSON.stringify(app));
+
+window.location.href="app.html";
+
+};
 
 appsBox.appendChild(card);
 
@@ -729,23 +698,7 @@ return div.innerHTML;
 
 checkLogin();
 
-loadApps();const capcutBox = document.createElement("div");
-
-capcutBox.innerHTML = `
-  <div style="border:1px solid #ddd;border-radius:12px;padding:16px;margin:20px 0;text-align:center;">
-    <h2>CapCut</h2>
-    <p>Video editing के लिए CapCut डाउनलोड करें।</p>
-
-  <a href="https://drive.google.com/uc?export=download&id=1aBoQWS2xgzmy7lJUdT4gQ4zchayOD7q1"
-       target="_blank"
-       rel="noopener"
-       style="display:inline-block;background:#000;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">
-       Download CapCut
-    </a>
-  </div>
-`;
-
-document.body.appendChild(capcutBox);
+loadApps();
 </script>
 
 </body>
